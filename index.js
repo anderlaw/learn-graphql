@@ -5,77 +5,80 @@ const {
   buildSchema,
   GraphQLSchema,
   GraphQLObjectType,
+  GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLInt,
   GraphQLString,
   GraphQLID,
 } = require("graphql");
+
+//声明变量以便修改它
+let news = "特朗普发表重要讲话"
+
 const { graphqlHTTP } = require("express-graphql");
-
-const postType = new GraphQLObjectType({
-  name: "Post",
-  fields: {
-    id: { type: GraphQLID },
-    title: { type: GraphQLString },
-    content: { type: GraphQLString },
-  },
-});
-const userType = new GraphQLObjectType({
-  name: "User",
-  fields: {
-    id: { type: GraphQLInt },
-    name: { type: GraphQLString },
-    gender: { type: GraphQLString },
-    posts: { type: new GraphQLList(postType) },
-  },
-});
-
-const schema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: "Query",
-    fields: {
-      user: {
-        type: new GraphQLNonNull(userType),
-        args: {
-          id: {
-            type: GraphQLInt,
-          },
-        },
-        resolve: function (source, args) {
-          const id = args.id;
-          const res_posts = posts.filter((item) => item.author_id === id);
-          console.log(id, res_posts);
-          return Object.assign(
-            { posts: res_posts },
-            users.find((item) => item.id === id),
-          );
-        },
-      },
-      users: {
-        type: new GraphQLList(userType),
-        resolve: function (source, args) {
-          console.log(args);
-          return users;
-        },
-      },
-    },
-  }),
-  types: [userType],
-});
+const buildedSchema = buildSchema(`
+  type Person {
+    name:String!
+    gender: String!
+    age: Int!
+    sayHi(msg:String!): String
+  }
+  type User{
+    id:Int,
+    name:String,
+    gender:String,
+    friends:[User]
+  }
+  type Query {
+    getPerson(name: String,gender:String,age:Int): Person
+    getNews:String
+    user(id:Int):User
+  }
+  type Mutation {
+    setNews(message: String): String
+  }
+  
+`)
+class Person{
+  constructor(name,gender,age){
+    this.name = name;
+    this.gender = gender;
+    this.age = age;
+  }
+  sayHi({msg}){
+    return `${msg},my name is ${this.name}`
+  }
+}
 app.use(
   "/graphql",
   graphqlHTTP({
-    schema,
+    schema:buildedSchema,
     rootValue: {
-      hello: () => "hello,world!",
+      getPerson: ({name,gender,age}) => new Person(name,gender,age),
+      user:({id})=>{
+        console.log(id)
+        const tempUser = users.find(user=>user.id === id)
+        const {friends,...userPlainVals} = tempUser
+
+        const finalUser = {...userPlainVals,friends:friends.map(id=>users.find(user=>user.id === id))};
+        console.log(JSON.stringify(finalUser));
+        return finalUser
+      },
+      getMessage: () => {
+        return news;
+      },
+      setNews: ({message}) => {
+        console.log(message)
+        news = message;
+        return news;
+      }
     },
     graphiql: true,
   }),
 );
 // 静态资源设置
 app.use(express.static("front-end/dist"));
-
 app.listen(4000, () => {
   console.log("app is running at 4000 port!");
 });
