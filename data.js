@@ -3,21 +3,25 @@ const users = [
     id: 1,
     name: "Tom",
     gender: "male",
+    friends:[2,3,4]
   },
   {
     id: 2,
     name: "Jerry",
     gender: "female",
+    friends:[1,3]
   },
   {
     id: 3,
     name: "Hank",
     gender: "male",
+    friends:[1,2]
   },
   {
     id: 4,
     name: "Andrew",
     gender: "male",
+    friends:[1]
   },
 ];
 const posts = [
