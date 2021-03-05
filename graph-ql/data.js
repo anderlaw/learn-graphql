@@ -92,4 +92,47 @@ module.exports = {
   users,
   posts,
   comments,
+  getFriends(){
+
+  },
+  getPosts(){
+
+  },
+  getUser(id){
+    const user = users.find(user=>user.id === id);
+    return user ?? {
+      id:-1,
+      name:"default",
+      gender:"middle"
+    } 
+    console.log('测试')
+  }
 };
+/**
+ * 根据id请求用户信息(发表的文章，)
+ * 没有参数则返回所有的用户
+ * user {
+ *  id
+ * name
+ * gender
+ * friends:[User]
+ * posts:[Post]
+ * }
+ * type User{
+ *  id,
+ * name
+ * gender
+ * friends:[User]
+ * 
+ * }
+ * type Post{
+ *  id,
+ *  title,
+ *  content,
+ *  comments:[]
+ * }
+ * type Comment{
+ *  id,
+ *  content
+ * }
+ */
