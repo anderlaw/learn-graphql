@@ -8,6 +8,7 @@ const { GraphQLNonNull, GraphQLInt, GraphQLInterfaceType, GraphQLString, GraphQL
  *   friends: [Character!]!
  * }
  */
+const userType = require('../types/user')
 const CharacterInterface = new GraphQLInterfaceType({
   name: 'Character',
   fields: () => ({
@@ -23,6 +24,9 @@ const CharacterInterface = new GraphQLInterfaceType({
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CharacterInterface))),
       description:'The friends of the character, or an empty list if they have none.',
     }
-  })
+  }),
+  resolveType(character) {
+    return userType.name;
+  }
 });
 module.exports.CharacterInterface = CharacterInterface

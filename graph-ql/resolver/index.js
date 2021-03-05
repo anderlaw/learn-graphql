@@ -18,9 +18,16 @@ module.exports = {
         },userPlainVals)
       }),
     };
-    console.log(JSON.stringify(finalUser));
     finalUser.posts = [];
     console.log(finalUser);
     return finalUser;
+  },
+  allUsers:()=>{
+    return users
+  },
+  Character:{
+    __resolveType: parent => {
+      return "User"
+    }
   }
 }

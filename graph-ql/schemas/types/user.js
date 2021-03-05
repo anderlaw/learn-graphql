@@ -12,6 +12,7 @@ const { GraphQLNonNull, GraphQLInt, GraphQLObjectType, GraphQLString, GraphQLLis
 const { GenderEnum } = require('../enum/gender')
 const postType = require('./post')
 const { CharacterInterface } = require('../interface/character')
+const {getFriends} = require('../../data')
 module.exports = new GraphQLObjectType({
   name:"User",
   fields: () => ({
@@ -30,7 +31,10 @@ module.exports = new GraphQLObjectType({
     friends: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CharacterInterface))),
       description:'The friends of the human, or an empty list if they have none.',
-      resolve: (human) => getFriends(human),
+      resolve: (human) => {
+        const id = human.id;
+        return getFriends(id)
+      },
     },
     posts: {
       type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(postType))),

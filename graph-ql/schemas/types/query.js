@@ -1,7 +1,7 @@
-const { GraphQLNonNull, GraphQLInt, GraphQLObjectType, GraphQLString } = require("graphql")
+const { GraphQLNonNull, GraphQLInt, GraphQLObjectType, GraphQLString, GraphQLList } = require("graphql")
 
 const userType = require('./user')
-
+const {CharacterInterface} = require('../interface/character')
 /**
  * type Query{
  *  user(id:Int):User
@@ -19,5 +19,8 @@ module.exports = new GraphQLObjectType({
         },
       }
     },
+    allUsers:{
+      type:new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(CharacterInterface)))
+    }
   })
 })

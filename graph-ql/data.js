@@ -92,8 +92,8 @@ module.exports = {
   users,
   posts,
   comments,
-  getFriends(){
-
+  getFriends(id){
+    return users.find(user=>user.id === id).friends.map(friendId=>users.find(user=>user.id === friendId))
   },
   getPosts(){
 
@@ -105,7 +105,6 @@ module.exports = {
       name:"default",
       gender:"middle"
     } 
-    console.log('测试')
   }
 };
 /**
