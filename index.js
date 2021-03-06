@@ -16,39 +16,53 @@ const users = [
   {
     id:1,
     name:"Andrew",
-    email:"9812@qq.com"
+    email:"9812@qq.com",
+    friends:[2,3]
   },
   {
     id:2,
     name:"Hank",
-    email:"123123123@qq.com"
+    email:"123123123@qq.com",
+    friends:[1,3,4]
+  },
+  {
+    id:3,
+    name:"Jerry",
+    email:"123123123@qq.com",
+    friends:[1,2,4]
+  },
+  {
+    id:4,
+    name:"Stephern",
+    email:"123123123@qq.com",
+    friends:[2,3]
   }
 ]
 const typeDefs = gql`
   type Book {
-    "this is a single line string literal"
     title: String
-    """
-    this is multiple line string literal
-    """
     author: String
-  }
-  type Query {
-    books: [Book]
-    color(colorType:AllowedColor):String
-    user(id:Int!):User
   }
   type Mutation{
     addBook(title:String,author:String):Book
   }
-  type User{
-    id:Int!
-    name:String!
-    email:String!
-  }
   enum AllowedColor {
     light
     dark
+  }
+  type Query {
+    books: [Book]
+    color(colorType:AllowedColor):String
+    user(id:Int):User
+  }
+  """
+  递归query
+  """
+  type User{
+    id:Int,
+    name:String,
+    email:String,
+    friends:[User]
   }
 `;
 const resolvers = {
@@ -62,7 +76,6 @@ const resolvers = {
     user:(_,{id})=>{
       return users.find(user=>user.id === id)
     }
-
   },
   Mutation:{
     addBook:(_,{title,author})=>{
@@ -77,6 +90,12 @@ const resolvers = {
   AllowedColor:{
     light:"#ffffff",
     dark:"#e3e3e3",
+  },
+  User:{
+    friends(parent){
+      console.log(parent)
+      return parent.friends.map(friendId=>users.find(user=>user.id === friendId))
+    }
   }
 };
 
